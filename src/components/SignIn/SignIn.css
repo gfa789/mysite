@@ -1,0 +1,19 @@
+.sign-in-btn {
+    display: flex;
+    align-items: center;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sign-in-btn:hover {
+    background-color: var(--secondary-color);
+  }
+  
+  .sign-in-btn svg {
+    margin-right: 0.5rem;
+  }

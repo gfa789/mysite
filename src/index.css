@@ -11,3 +11,35 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+:root {
+  /* Light theme (default) */
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --hover-color: #0056b3;
+}
+
+/* Dark theme */
+.theme-dark {
+  --bg-color: #333333;
+  --text-color: #ffffff;
+  --primary-color: #17a2b8;
+  --secondary-color: #6c757d;
+  --hover-color: #138496;
+}
+
+/* Blue theme */
+.theme-blue {
+  --bg-color: #e6f2ff;
+  --text-color: #00366d;
+  --primary-color: #0056b3;
+  --secondary-color: #6c757d;
+  --hover-color: #003d7a;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
