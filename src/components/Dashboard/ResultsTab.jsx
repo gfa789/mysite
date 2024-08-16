@@ -1,24 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase.config';
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
+import './ResultsTab.css';
 
 function ResultsTab() {
   const [results, setResults] = useState([]);
+  const [leagues, setLeagues] = useState([]);
+  const [teams, setTeams] = useState([]);
+  const [players, setPlayers] = useState([]);
   const [newResult, setNewResult] = useState({ 
-    homeTeam: '', 
-    awayTeam: '', 
-    homeGoals: 0, 
-    awayGoals: 0, 
-    season: '', 
-    matchDay: 0,
-    date: '',
-    goalScorers: ''
+    leagueId: '',
+    homeTeam: '',
+    awayTeam: '',
+    homeGoals: 0,
+    awayGoals: 0,
+    matchDay: 1,
+    season: '',
+    goalScorers: []
   });
   const [editingResult, setEditingResult] = useState(null);
+  const [selectedLeague, setSelectedLeague] = useState('');
+
+  const seasons = [
+    '2018/19', '2019/20', '2020/21', '2021/22', '2022/23', '2023/24', '2024/25'
+  ];
 
   useEffect(() => {
+    fetchLeagues();
     fetchResults();
   }, []);
+
+  useEffect(() => {
+    if (selectedLeague) {
+      fetchTeams(selectedLeague);
+    }
+  }, [selectedLeague]);
+
+  useEffect(() => {
+    if (newResult.homeTeam || newResult.awayTeam) {
+      fetchPlayers(newResult.homeTeam, newResult.awayTeam);
+    }
+  }, [newResult.homeTeam, newResult.awayTeam]);
+
+  const fetchLeagues = async () => {
+    const leaguesCollection = collection(db, 'leagues');
+    const leaguesSnapshot = await getDocs(leaguesCollection);
+    const leaguesList = leaguesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setLeagues(leaguesList);
+  };
 
   const fetchResults = async () => {
     const resultsCollection = collection(db, 'results');
@@ -27,12 +56,37 @@ function ResultsTab() {
     setResults(resultsList);
   };
 
+  const fetchTeams = async (leagueId) => {
+    const teamsQuery = query(collection(db, 'teams'), where("leagueId", "==", leagueId));
+    const teamsSnapshot = await getDocs(teamsQuery);
+    const teamsList = teamsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setTeams(teamsList);
+  };
+
+  const fetchPlayers = async (homeTeamId, awayTeamId) => {
+    const playersQuery = query(collection(db, 'players'), where("teamId", "in", [homeTeamId, awayTeamId]));
+    const playersSnapshot = await getDocs(playersQuery);
+    const playersList = playersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setPlayers(playersList);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewResult(prev => ({ 
       ...prev, 
       [name]: ['homeGoals', 'awayGoals', 'matchDay'].includes(name) ? Number(value) : value 
     }));
+  };
+
+  const handleLeagueChange = (e) => {
+    const leagueId = e.target.value;
+    setSelectedLeague(leagueId);
+    setNewResult(prev => ({ ...prev, leagueId, homeTeam: '', awayTeam: '' }));
+  };
+
+  const handleGoalScorerChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    setNewResult(prev => ({ ...prev, goalScorers: selectedOptions }));
   };
 
   const handleSubmit = async (e) => {
@@ -45,14 +99,14 @@ function ResultsTab() {
         await addDoc(collection(db, 'results'), newResult);
       }
       setNewResult({ 
-        homeTeam: '', 
-        awayTeam: '', 
-        homeGoals: 0, 
-        awayGoals: 0, 
-        season: '', 
-        matchDay: 0,
-        date: '',
-        goalScorers: ''
+        leagueId: '',
+        homeTeam: '',
+        awayTeam: '',
+        homeGoals: 0,
+        awayGoals: 0,
+        matchDay: 1,
+        season: '',
+        goalScorers: []
       });
       fetchResults();
     } catch (error) {
@@ -63,6 +117,7 @@ function ResultsTab() {
   const handleEdit = (result) => {
     setEditingResult(result);
     setNewResult(result);
+    setSelectedLeague(result.leagueId);
   };
 
   const handleDelete = async (id) => {
@@ -75,25 +130,42 @@ function ResultsTab() {
   };
 
   return (
-    <div>
+    <div className="results-container">
       <h2>Results</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
+      <form className="results-form" onSubmit={handleSubmit}>
+        <select
+          name="leagueId"
+          value={newResult.leagueId}
+          onChange={handleLeagueChange}
+          required
+        >
+          <option value="">Select a League</option>
+          {leagues.map(league => (
+            <option key={league.id} value={league.id}>{league.name}</option>
+          ))}
+        </select>
+        <select
           name="homeTeam"
           value={newResult.homeTeam}
           onChange={handleInputChange}
-          placeholder="Home Team"
           required
-        />
-        <input
-          type="text"
+        >
+          <option value="">Select Home Team</option>
+          {teams.map(team => (
+            <option key={team.id} value={team.id}>{team.name}</option>
+          ))}
+        </select>
+        <select
           name="awayTeam"
           value={newResult.awayTeam}
           onChange={handleInputChange}
-          placeholder="Away Team"
           required
-        />
+        >
+          <option value="">Select Away Team</option>
+          {teams.filter(team => team.id !== newResult.homeTeam).map(team => (
+            <option key={team.id} value={team.id}>{team.name}</option>
+          ))}
+        </select>
         <input
           type="number"
           name="homeGoals"
@@ -111,46 +183,46 @@ function ResultsTab() {
           required
         />
         <input
-          type="text"
-          name="season"
-          value={newResult.season}
-          onChange={handleInputChange}
-          placeholder="Season"
-          required
-        />
-        <input
           type="number"
           name="matchDay"
           value={newResult.matchDay}
           onChange={handleInputChange}
-          placeholder="Match Day"
+          min="1"
+          max={teams.length - 1}
           required
         />
-        <input
-          type="date"
-          name="date"
-          value={newResult.date}
+        <select
+          name="season"
+          value={newResult.season}
           onChange={handleInputChange}
           required
-        />
-        <input
-          type="text"
+        >
+          <option value="">Select Season</option>
+          {seasons.map(season => (
+            <option key={season} value={season}>{season}</option>
+          ))}
+        </select>
+        <select
+          multiple
           name="goalScorers"
           value={newResult.goalScorers}
-          onChange={handleInputChange}
-          placeholder="Goal Scorers (comma separated)"
-        />
+          onChange={handleGoalScorerChange}
+        >
+          {players.map(player => (
+            <option key={player.id} value={player.id}>{player.name}</option>
+          ))}
+        </select>
         <button type="submit">{editingResult ? 'Update Result' : 'Add Result'}</button>
       </form>
-      <table>
+      <table className="results-table">
         <thead>
           <tr>
+            <th>League</th>
             <th>Home Team</th>
             <th>Away Team</th>
             <th>Score</th>
-            <th>Season</th>
             <th>Match Day</th>
-            <th>Date</th>
+            <th>Season</th>
             <th>Goal Scorers</th>
             <th>Actions</th>
           </tr>
@@ -158,13 +230,13 @@ function ResultsTab() {
         <tbody>
           {results.map(result => (
             <tr key={result.id}>
-              <td>{result.homeTeam}</td>
-              <td>{result.awayTeam}</td>
+              <td>{leagues.find(league => league.id === result.leagueId)?.name}</td>
+              <td>{teams.find(team => team.id === result.homeTeam)?.name}</td>
+              <td>{teams.find(team => team.id === result.awayTeam)?.name}</td>
               <td>{result.homeGoals} - {result.awayGoals}</td>
-              <td>{result.season}</td>
               <td>{result.matchDay}</td>
-              <td>{result.date}</td>
-              <td>{result.goalScorers}</td>
+              <td>{result.season}</td>
+              <td>{result.goalScorers.map(scorer => players.find(player => player.id === scorer)?.name).join(', ')}</td>
               <td>
                 <button onClick={() => handleEdit(result)}>Edit</button>
                 <button onClick={() => handleDelete(result.id)}>Delete</button>

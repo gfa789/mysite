@@ -2,62 +2,102 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase.config';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
-function LeagueTable({ leagueId }) {
+function LeagueTable({ leagueId, seasonId }) {
   const [teams, setTeams] = useState([]);
 
   useEffect(() => {
-    fetchTeams();
-  }, [leagueId]);
+    if (leagueId && seasonId) {
+      fetchTeamsAndResults();
+    }
+  }, [leagueId, seasonId]);
 
-  const fetchTeams = async () => {
+  const fetchTeamsAndResults = async () => {
+    // Fetch teams
     const teamsRef = collection(db, 'teams');
-    const q = query(teamsRef, where("leagueId", "==", leagueId));
-    const querySnapshot = await getDocs(q);
-    let fetchedTeams = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const teamsQuery = query(teamsRef, where("leagueId", "==", leagueId));
+    const teamsSnapshot = await getDocs(teamsQuery);
+    let fetchedTeams = teamsSnapshot.docs.map(doc => ({ 
+      id: doc.id, 
+      ...doc.data(),
+      wins: 0,
+      draws: 0,
+      losses: 0,
+      goalsFor: 0,
+      goalsAgainst: 0,
+      points: 0,
+      headToHead: {}
+    }));
     
-    // Fetch head-to-head results
+    // Fetch results for the specific season and league
     const resultsRef = collection(db, 'results');
-    const resultsQuery = query(resultsRef, where("leagueId", "==", leagueId));
+    const resultsQuery = query(resultsRef, 
+      where("leagueId", "==", leagueId),
+      where("season", "==", seasonId)
+    );
     const resultsSnapshot = await getDocs(resultsQuery);
     const results = resultsSnapshot.docs.map(doc => doc.data());
 
-    // Calculate head-to-head statistics
-    fetchedTeams = fetchedTeams.map(team => {
-      const headToHead = {};
-      results.forEach(result => {
-        if (result.homeTeam === team.id || result.awayTeam === team.id) {
-          const opposingTeam = result.homeTeam === team.id ? result.awayTeam : result.homeTeam;
-          if (!headToHead[opposingTeam]) {
-            headToHead[opposingTeam] = { points: 0, goalDifference: 0, awayGoals: 0 };
-          }
-          if (result.homeTeam === team.id) {
-            headToHead[opposingTeam].points += result.homeGoals > result.awayGoals ? 3 : (result.homeGoals === result.awayGoals ? 1 : 0);
-            headToHead[opposingTeam].goalDifference += result.homeGoals - result.awayGoals;
-          } else {
-            headToHead[opposingTeam].points += result.awayGoals > result.homeGoals ? 3 : (result.awayGoals === result.homeGoals ? 1 : 0);
-            headToHead[opposingTeam].goalDifference += result.awayGoals - result.homeGoals;
-            headToHead[opposingTeam].awayGoals += result.awayGoals;
-          }
+    // Calculate statistics based on results
+    results.forEach(result => {
+      const homeTeam = fetchedTeams.find(team => team.id === result.homeTeam);
+      const awayTeam = fetchedTeams.find(team => team.id === result.awayTeam);
+
+      if (homeTeam && awayTeam) {
+        // Update home team stats
+        homeTeam.goalsFor += result.homeGoals;
+        homeTeam.goalsAgainst += result.awayGoals;
+        // Update away team stats
+        awayTeam.goalsFor += result.awayGoals;
+        awayTeam.goalsAgainst += result.homeGoals;
+
+        if (result.homeGoals > result.awayGoals) {
+          homeTeam.wins++;
+          homeTeam.points += 3;
+          awayTeam.losses++;
+        } else if (result.homeGoals < result.awayGoals) {
+          awayTeam.wins++;
+          awayTeam.points += 3;
+          homeTeam.losses++;
+        } else {
+          homeTeam.draws++;
+          awayTeam.draws++;
+          homeTeam.points++;
+          awayTeam.points++;
         }
-      });
-      return { ...team, headToHead };
+
+        // Update head-to-head
+        if (!homeTeam.headToHead[awayTeam.id]) homeTeam.headToHead[awayTeam.id] = { points: 0, goalDifference: 0, awayGoals: 0 };
+        if (!awayTeam.headToHead[homeTeam.id]) awayTeam.headToHead[homeTeam.id] = { points: 0, goalDifference: 0, awayGoals: 0 };
+
+        homeTeam.headToHead[awayTeam.id].points += result.homeGoals > result.awayGoals ? 3 : (result.homeGoals === result.awayGoals ? 1 : 0);
+        homeTeam.headToHead[awayTeam.id].goalDifference += result.homeGoals - result.awayGoals;
+        awayTeam.headToHead[homeTeam.id].points += result.awayGoals > result.homeGoals ? 3 : (result.awayGoals === result.homeGoals ? 1 : 0);
+        awayTeam.headToHead[homeTeam.id].goalDifference += result.awayGoals - result.homeGoals;
+        awayTeam.headToHead[homeTeam.id].awayGoals += result.awayGoals;
+      }
     });
 
     // Sort teams
     fetchedTeams.sort((a, b) => {
       if (b.points !== a.points) return b.points - a.points;
-      if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
+      
+      const goalDiffA = a.goalsFor - a.goalsAgainst;
+      const goalDiffB = b.goalsFor - b.goalsAgainst;
+      if (goalDiffB !== goalDiffA) return goalDiffB - goalDiffA;
       
       // Head-to-head comparison
       const headToHeadA = a.headToHead[b.id];
       const headToHeadB = b.headToHead[a.id];
       if (headToHeadA && headToHeadB) {
-        if (headToHeadA.points !== headToHeadB.points) return headToHeadA.points - headToHeadB.points;
-        if (headToHeadA.goalDifference !== headToHeadB.goalDifference) return headToHeadA.goalDifference - headToHeadB.goalDifference;
-        return headToHeadA.awayGoals - headToHeadB.awayGoals;
+        if (headToHeadA.points !== headToHeadB.points) return headToHeadB.points - headToHeadA.points;
+        if (headToHeadA.goalDifference !== headToHeadB.goalDifference) return headToHeadB.goalDifference - headToHeadA.goalDifference;
+        if (headToHeadB.awayGoals !== headToHeadA.awayGoals) return headToHeadB.awayGoals - headToHeadA.awayGoals;
       }
       
-      return 0;
+      if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+      
+      // Alphabetical order as final tiebreaker
+      return a.name.localeCompare(b.name);
     });
 
     setTeams(fetchedTeams);
@@ -65,7 +105,7 @@ function LeagueTable({ leagueId }) {
 
   return (
     <div className="league-table">
-      <h3>League Table</h3>
+      <h3>League Table - {seasonId} Season</h3>
       <table>
         <thead>
           <tr>

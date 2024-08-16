@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase.config';
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
 import LeagueTable from './LeagueTable';
 
 function LeaguesTab() {
@@ -8,9 +8,12 @@ function LeaguesTab() {
   const [newLeague, setNewLeague] = useState({ name: '', country: '' });
   const [editingLeague, setEditingLeague] = useState(null);
   const [viewingLeagueId, setViewingLeagueId] = useState(null);
+  const [selectedSeason, setSelectedSeason] = useState('');
+  const [availableSeasons, setAvailableSeasons] = useState([]);
 
   useEffect(() => {
     fetchLeagues();
+    fetchAvailableSeasons();
   }, []);
 
   const fetchLeagues = async () => {
@@ -18,6 +21,16 @@ function LeaguesTab() {
     const leaguesSnapshot = await getDocs(leaguesCollection);
     const leaguesList = leaguesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     setLeagues(leaguesList);
+  };
+
+  const fetchAvailableSeasons = async () => {
+    const resultsCollection = collection(db, 'results');
+    const resultsSnapshot = await getDocs(resultsCollection);
+    const seasons = new Set(resultsSnapshot.docs.map(doc => doc.data().season));
+    setAvailableSeasons(Array.from(seasons).sort());
+    if (seasons.size > 0) {
+      setSelectedSeason(Array.from(seasons).sort()[0]);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -103,7 +116,20 @@ function LeaguesTab() {
           ))}
         </tbody>
       </table>
-      {viewingLeagueId && <LeagueTable leagueId={viewingLeagueId} />}
+      {viewingLeagueId && (
+        <div>
+          <h3>Select Season</h3>
+          <select
+            value={selectedSeason}
+            onChange={(e) => setSelectedSeason(e.target.value)}
+          >
+            {availableSeasons.map(season => (
+              <option key={season} value={season}>{season}</option>
+            ))}
+          </select>
+          <LeagueTable leagueId={viewingLeagueId} seasonId={selectedSeason} />
+        </div>
+      )}
     </div>
   );
 }

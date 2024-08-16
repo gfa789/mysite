@@ -8,12 +8,6 @@ function TeamsTab() {
   const [newTeam, setNewTeam] = useState({ 
     name: '', 
     color: '', 
-    wins: 0, 
-    losses: 0, 
-    draws: 0, 
-    goalsFor: 0, 
-    goalsAgainst: 0,
-    points: 0,
     leagueId: ''
   });
   const [editingTeam, setEditingTeam] = useState(null);
@@ -39,12 +33,7 @@ function TeamsTab() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewTeam(prev => ({ 
-      ...prev, 
-      [name]: ['wins', 'losses', 'draws', 'goalsFor', 'goalsAgainst', 'points'].includes(name) 
-        ? Number(value) 
-        : value 
-    }));
+    setNewTeam(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -59,12 +48,6 @@ function TeamsTab() {
       setNewTeam({ 
         name: '', 
         color: '', 
-        wins: 0, 
-        losses: 0, 
-        draws: 0, 
-        goalsFor: 0, 
-        goalsAgainst: 0,
-        points: 0,
         leagueId: ''
       });
       fetchTeams();
@@ -107,54 +90,6 @@ function TeamsTab() {
           placeholder="Team Color"
           required
         />
-        <input
-          type="number"
-          name="wins"
-          value={newTeam.wins}
-          onChange={handleInputChange}
-          placeholder="Wins"
-          required
-        />
-        <input
-          type="number"
-          name="losses"
-          value={newTeam.losses}
-          onChange={handleInputChange}
-          placeholder="Losses"
-          required
-        />
-        <input
-          type="number"
-          name="draws"
-          value={newTeam.draws}
-          onChange={handleInputChange}
-          placeholder="Draws"
-          required
-        />
-        <input
-          type="number"
-          name="goalsFor"
-          value={newTeam.goalsFor}
-          onChange={handleInputChange}
-          placeholder="Goals For"
-          required
-        />
-        <input
-          type="number"
-          name="goalsAgainst"
-          value={newTeam.goalsAgainst}
-          onChange={handleInputChange}
-          placeholder="Goals Against"
-          required
-        />
-        <input
-          type="number"
-          name="points"
-          value={newTeam.points}
-          onChange={handleInputChange}
-          placeholder="Points"
-          required
-        />
         <select
           name="leagueId"
           value={newTeam.leagueId}
@@ -173,12 +108,6 @@ function TeamsTab() {
           <tr>
             <th>Name</th>
             <th>Color</th>
-            <th>Wins</th>
-            <th>Losses</th>
-            <th>Draws</th>
-            <th>GF</th>
-            <th>GA</th>
-            <th>Points</th>
             <th>League</th>
             <th>Actions</th>
           </tr>
@@ -188,12 +117,6 @@ function TeamsTab() {
             <tr key={team.id}>
               <td>{team.name}</td>
               <td>{team.color}</td>
-              <td>{team.wins}</td>
-              <td>{team.losses}</td>
-              <td>{team.draws}</td>
-              <td>{team.goalsFor}</td>
-              <td>{team.goalsAgainst}</td>
-              <td>{team.points}</td>
               <td>{leagues.find(league => league.id === team.leagueId)?.name || 'N/A'}</td>
               <td>
                 <button onClick={() => handleEdit(team)}>Edit</button>
