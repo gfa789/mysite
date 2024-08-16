@@ -1,0 +1,18 @@
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .dashboard-container h1 {
+    text-align: center;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+  }
+  
+  .tab-content {
+    background-color: var(--bg-color);
+    border: 1px solid var(--secondary-color);
+    border-radius: 0 0 8px 8px;
+    padding: 2rem;
+  }

@@ -1,0 +1,73 @@
+.settings-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: var(--bg-color);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .settings-container h2 {
+    text-align: center;
+    color: var(--text-color);
+  }
+  
+  .settings-container form, .profile-picture-section, .delete-account-section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  
+  .settings-container h3 {
+    color: var(--text-color);
+    margin-bottom: 10px;
+  }
+  
+  .settings-container input {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid var(--secondary-color);
+    border-radius: 4px;
+  }
+  
+  .settings-container button {
+    padding: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .settings-container button:hover {
+    background-color: var(--btn-hover-color);
+  }
+  
+  .error-message {
+    color: red;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .success-message {
+    color: green;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .profile-picture {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+  
+  .delete-account-btn {
+    background-color: #dc3545;
+  }
+  
+  .delete-account-btn:hover {
+    background-color: #c82333;
+  }
