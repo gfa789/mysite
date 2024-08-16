@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Tabs, Tab } from './TabComponent';
 import LeaguesTab from './LeaguesTab';
 import TeamsTab from './TeamsTab';
-import ResultsTab from './ResultsTab.jsx';
+import ResultsTab from './ResultsTab';
 import PlayersTab from './PlayersTab';
 import './Dashboard.css';
 
