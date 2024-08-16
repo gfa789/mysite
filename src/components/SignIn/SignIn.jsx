@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, PhoneAuthProvider, PhoneMultiFactorGenerator, multiFactor } from 'firebase/auth';
-import { auth } from '../../firebase';
+import { auth } from '../../firebase.config';
 import { useNavigate, Link } from 'react-router-dom';
 import './SignIn.css';
 

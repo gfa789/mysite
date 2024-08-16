@@ -3,7 +3,7 @@ import { FaSignOutAlt, FaBars, FaSignInAlt, FaUserPlus } from 'react-icons/fa';
 import Sidebar from '../Sidebar/Sidebar';
 import './Navbar.css';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth, db } from '../../firebase';
+import { auth, db } from '../../firebase.config';
 import { doc, getDoc } from 'firebase/firestore';
 import { Link, useNavigate } from 'react-router-dom';
 

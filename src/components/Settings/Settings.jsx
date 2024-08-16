@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db, storage } from '../../firebase';
-import { updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential, deleteUser, updateEmail } from 'firebase/auth';
+import { auth, db, storage } from '../../firebase.config';
+import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, deleteUser, updateEmail } from 'firebase/auth';
 import { doc, updateDoc, getDoc, deleteDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { ref, deleteObject } from 'firebase/storage';
 import PasswordStrengthBar from 'react-password-strength-bar';
 import { useNavigate, Link } from 'react-router-dom';
 import './Settings.css';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 function Settings() {
   const [username, setUsername] = useState('');

@@ -6,7 +6,7 @@ import SignIn from './components/SignIn/SignIn';
 import Navbar from './components/Navbar/Navbar';
 import Register from './components/Register/Register';
 import Settings from './components/Settings/Settings';
-import EmailVerification from './components/EmailVerification/EmailVerification';
+// import EmailVerification from './components/EmailVerification/EmailVerification';
 import PasswordReset from './components/PasswordReset/PasswordReset';
 import MFAEnrollment from './components/MFAEnrollment/MFAEnrollment';
 import { AuthProvider } from './contexts/AuthContext';
