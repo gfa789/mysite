@@ -6,6 +6,8 @@ import { db } from '../../firebase.config';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './AdminDashboard.css';
+import InputScores from './InputScores';
+import LeagueTable from './LeagueTable';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -19,6 +21,7 @@ const AdminDashboard = () => {
   const [selectedLeagueForTeams, setSelectedLeagueForTeams] = useState('');
   const [matches, setMatches] = useState([]);
   const [activeMatchesTab, setActiveMatchesTab] = useState(0);
+  const [editingTeam, setEditingTeam] = useState(null);
 
   const [newFixture, setNewFixture] = useState({
     leagueId: '',
@@ -67,6 +70,8 @@ const AdminDashboard = () => {
     }
   };
 
+  
+
   const handleDeleteLeague = async (leagueId) => {
     try {
       await deleteDoc(doc(db, 'leagues', leagueId));
@@ -93,6 +98,22 @@ const AdminDashboard = () => {
       console.error("Error adding team: ", error);
     }
   };
+
+  const handleUpdateTeam = async (e) => {
+    e.preventDefault();
+    if (!editingTeam) return;
+    try {
+      const teamRef = doc(db, 'teams', editingTeam.id);
+      await updateDoc(teamRef, editingTeam);
+      setEditingTeam(null);
+      fetchTeams();
+    } catch (error) {
+      console.error("Error updating team: ", error);
+    }
+  };
+
+
+  
 
   const handleDeleteTeam = async (teamId) => {
     try {
@@ -153,14 +174,17 @@ const AdminDashboard = () => {
     return options;
   };
 
-  const LeagueTable = ({ league }) => {
-    return (
-      <div>
-        <h3>{league.name} Table</h3>
-        <p>League table will be implemented here</p>
-      </div>
-    );
-  };
+//   const LeagueTable = ({ league }) => {
+//     return (
+//       <div>
+//         <h3>{league.name} Table</h3>
+//         <p>League table will be implemented here</p>
+//       </div>
+//     );
+//   };
+
+  
+  const sortAlphabetically = (a, b) => a.name.localeCompare(b.name);
 
   return (
     <div className="admin-dashboard">
@@ -170,11 +194,12 @@ const AdminDashboard = () => {
           <Tab>Leagues</Tab>
           <Tab>Teams</Tab>
           <Tab>Matches</Tab>
+          <Tab>League Tables</Tab>
         </TabList>
 
         <TabPanel>
           <h2>Leagues</h2>
-          <form onSubmit={handleCreateLeague}>
+          <form onSubmit={handleCreateLeague} className="create-form">
             <input
               type="text"
               placeholder="League Name"
@@ -191,6 +216,7 @@ const AdminDashboard = () => {
               <option value="England">England</option>
               <option value="Spain">Spain</option>
               <option value="Germany">Germany</option>
+              {/* Add more countries as needed */}
             </select>
             <select
               value={newLeague.division}
@@ -201,21 +227,29 @@ const AdminDashboard = () => {
                 <option key={num} value={num}>{num}</option>
               ))}
             </select>
-            <button type="submit">Create League</button>
+            <button type="submit" className="create-button">Create League</button>
           </form>
 
-          {leagues.map(league => (
-            <div key={league.id}>
-              <h3>{league.name}</h3>
-              <p>Country: {league.country}, Division: {league.division}</p>
-              <button onClick={() => setEditingLeague(league)}>Edit</button>
-              <button onClick={() => handleDeleteLeague(league.id)}>Delete</button>
-              <LeagueTable league={league} />
+          <div className="view-section">
+            <h3>View Leagues</h3>
+            <div className="grid-layout">
+              {leagues.sort(sortAlphabetically).map(league => (
+                <div key={league.id} className="grid-item">
+                  <div className="item-info">
+                    <span className="item-name">{league.name}</span>
+                    <span className="item-detail">{league.country}, Division {league.division}</span>
+                  </div>
+                  <div className="item-actions">
+                    <button onClick={() => setEditingLeague(league)} className="edit-button">Edit</button>
+                    <button onClick={() => handleDeleteLeague(league.id)} className="delete-button">Delete</button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
 
           {editingLeague && (
-            <form onSubmit={handleUpdateLeague}>
+            <form onSubmit={handleUpdateLeague} className="edit-form">
               <input
                 type="text"
                 value={editingLeague.name}
@@ -231,6 +265,7 @@ const AdminDashboard = () => {
                 <option value="England">England</option>
                 <option value="Spain">Spain</option>
                 <option value="Germany">Germany</option>
+                {/* Add more countries as needed */}
               </select>
               <select
                 value={editingLeague.division}
@@ -241,22 +276,22 @@ const AdminDashboard = () => {
                   <option key={num} value={num}>{num}</option>
                 ))}
               </select>
-              <button type="submit">Update League</button>
-              <button onClick={() => setEditingLeague(null)}>Cancel</button>
+              <button type="submit" className="update-button">Update League</button>
+              <button onClick={() => setEditingLeague(null)} className="cancel-button">Cancel</button>
             </form>
           )}
         </TabPanel>
 
         <TabPanel>
           <h2>Teams</h2>
-          <form onSubmit={handleCreateTeam}>
+          <form onSubmit={handleCreateTeam} className="create-form">
             <select
               value={newTeam.leagueId}
               onChange={(e) => setNewTeam({ ...newTeam, leagueId: e.target.value })}
               required
             >
               <option value="">Select League</option>
-              {leagues.map(league => (
+              {leagues.sort(sortAlphabetically).map(league => (
                 <option key={league.id} value={league.id}>{league.name}</option>
               ))}
             </select>
@@ -267,49 +302,101 @@ const AdminDashboard = () => {
               onChange={(e) => setNewTeam({ ...newTeam, name: e.target.value })}
               required
             />
-            <label>
-              Primary Color:
-              <input
-                type="color"
-                value={newTeam.primaryColor}
-                onChange={(e) => setNewTeam({ ...newTeam, primaryColor: e.target.value })}
-              />
-            </label>
-            <label>
-              Secondary Color:
-              <input
-                type="color"
-                value={newTeam.secondaryColor}
-                onChange={(e) => setNewTeam({ ...newTeam, secondaryColor: e.target.value })}
-              />
-            </label>
-            <button type="submit">Create Team</button>
+            <div className="color-inputs">
+              <label>
+                Primary Color:
+                <input
+                  type="color"
+                  value={newTeam.primaryColor}
+                  onChange={(e) => setNewTeam({ ...newTeam, primaryColor: e.target.value })}
+                />
+              </label>
+              <label>
+                Secondary Color:
+                <input
+                  type="color"
+                  value={newTeam.secondaryColor}
+                  onChange={(e) => setNewTeam({ ...newTeam, secondaryColor: e.target.value })}
+                />
+              </label>
+            </div>
+            <button type="submit" className="create-button">Create Team</button>
           </form>
 
-          <div>
+          <div className="view-section">
             <h3>View Teams</h3>
             <select
               value={selectedLeagueForTeams}
               onChange={(e) => setSelectedLeagueForTeams(e.target.value)}
+              className="league-selector"
             >
               <option value="">All Leagues</option>
-              {leagues.map(league => (
+              {leagues.sort(sortAlphabetically).map(league => (
                 <option key={league.id} value={league.id}>{league.name}</option>
               ))}
             </select>
-            <ul>
+            <div className="grid-layout">
               {teams
                 .filter(team => !selectedLeagueForTeams || team.leagueId === selectedLeagueForTeams)
+                .sort(sortAlphabetically)
                 .map(team => (
-                  <li key={team.id}>
-                    {team.name} - {leagues.find(l => l.id === team.leagueId)?.name}
-                    <span style={{ display: 'inline-block', width: '20px', height: '20px', backgroundColor: team.primaryColor, marginLeft: '10px' }}></span>
-                    <span style={{ display: 'inline-block', width: '20px', height: '20px', backgroundColor: team.secondaryColor, marginLeft: '5px' }}></span>
-                    <button onClick={() => handleDeleteTeam(team.id)}>Delete</button>
-                  </li>
+                  <div key={team.id} className="grid-item">
+                    <div className="item-info">
+                      <div className="team-colors">
+                        <div className="color-circle" style={{ background: `linear-gradient(to right, ${team.primaryColor} 50%, ${team.secondaryColor} 50%)` }}></div>
+                      </div>
+                      <span className="item-name">{team.name}</span>
+                      <span className="item-detail">{leagues.find(l => l.id === team.leagueId)?.name}</span>
+                    </div>
+                    <div className="item-actions">
+                      <button onClick={() => setEditingTeam(team)} className="edit-button">Edit</button>
+                      <button onClick={() => handleDeleteTeam(team.id)} className="delete-button">Delete</button>
+                    </div>
+                  </div>
                 ))}
-            </ul>
+            </div>
           </div>
+
+          {editingTeam && (
+            <form onSubmit={handleUpdateTeam} className="edit-form">
+              <select
+                value={editingTeam.leagueId}
+                onChange={(e) => setEditingTeam({ ...editingTeam, leagueId: e.target.value })}
+                required
+              >
+                <option value="">Select League</option>
+                {leagues.sort(sortAlphabetically).map(league => (
+                  <option key={league.id} value={league.id}>{league.name}</option>
+                ))}
+              </select>
+              <input
+                type="text"
+                value={editingTeam.name}
+                onChange={(e) => setEditingTeam({ ...editingTeam, name: e.target.value })}
+                required
+              />
+              <div className="color-inputs">
+                <label>
+                  Primary Color:
+                  <input
+                    type="color"
+                    value={editingTeam.primaryColor}
+                    onChange={(e) => setEditingTeam({ ...editingTeam, primaryColor: e.target.value })}
+                  />
+                </label>
+                <label>
+                  Secondary Color:
+                  <input
+                    type="color"
+                    value={editingTeam.secondaryColor}
+                    onChange={(e) => setEditingTeam({ ...editingTeam, secondaryColor: e.target.value })}
+                  />
+                </label>
+              </div>
+              <button type="submit" className="update-button">Update Team</button>
+              <button onClick={() => setEditingTeam(null)} className="cancel-button">Cancel</button>
+            </form>
+          )}
         </TabPanel>
 
         <TabPanel>
@@ -401,11 +488,18 @@ const AdminDashboard = () => {
               </TabPanel>
   
               <TabPanel>
-                <h3>Input Scores</h3>
-                <p>Score input functionality will be implemented here</p>
-              </TabPanel>
+              <InputScores 
+                leagues={leagues} 
+                teams={teams} 
+                fetchMatches={fetchMatches}
+              />
+            </TabPanel>
             </Tabs>
           </TabPanel>
+          <TabPanel>
+          <h2>League Tables</h2>
+          <LeagueTable leagues={leagues} teams={teams} />
+        </TabPanel>
         </Tabs>
       </div>
     );

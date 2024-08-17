@@ -4,6 +4,7 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    color: var(--text-color)
   }
   
   .admin-dashboard h1 {
@@ -12,7 +13,7 @@
   }
   
   .react-tabs__tab-list {
-    border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid var(--border-color);
     margin: 0 0 10px;
     padding: 0;
   }
@@ -26,12 +27,13 @@
     list-style: none;
     padding: 6px 12px;
     cursor: pointer;
+    color: var(--text-color);
   }
   
   .react-tabs__tab--selected {
-    background: #fff;
-    border-color: #aaa;
-    color: black;
+    background: var(--grid-item-color);
+    border-color: var(--border-color);
+    color: var(--text-color);
     border-radius: 5px 5px 0 0;
   }
   
@@ -53,18 +55,31 @@
   input, select, button {
     padding: 8px;
     font-size: 16px;
+    color: var(--text-color);
+  }
+
+  input, select {
+    
+    background-color: var(--input-color);
+  }
+
+  button {
+    background-color: var(--green-btn);
   }
   
-  .submit-button {
-    cursor: pointer;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-  }
+  .submit-button,
+.clear-button,
+.delete-button {
+  padding: 5px 10px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
   
   .submit-button:hover {
-    background-color: #45a049;
+    background-color: var(--green-btn-hover);
   }
   
   .admin-dashboard form label {
@@ -118,8 +133,8 @@
   }
   
   .react-datepicker__header {
-    background-color: #f0f0f0;
-    border-bottom: 1px solid #aeaeae;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
     padding-top: 8px;
   }
   
@@ -129,12 +144,12 @@
     border: 0.45rem solid transparent;
     max-width: 30px;
     cursor: pointer;
-    
   }
   
   .react-datepicker__navigation--previous {
     left: 10px;
     border-right-color: #ccc;
+    
   }
   
   .react-datepicker__navigation--next {
@@ -223,4 +238,473 @@
     .form-columns-container {
       flex-direction: column;
     }
+  }
+
+  .input-scores {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .score-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .score-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .score-container input {
+    width: 40px;
+    text-align: center;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  /* .score-filters select {
+    flex: 1;
+  } */
+  
+  .fixtures-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .fixture-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background-color: var(--grid-item-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .team-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+  }
+  
+  .team-color {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+  }
+  
+  .color-half {
+    width: 50%;
+    height: 100%;
+  }
+  
+  .fixture-item input,
+  .fixture-item .score {
+    width: 40px;
+    text-align: center;
+    padding: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+  }
+  
+  .fixture-item .score {
+    display: inline-block;
+    background-color: var(--grid-item-color);
+  }
+  
+  .fixture-actions {
+    display: flex;
+    gap: 5px;
+  }
+  
+  .fixture-item button {
+    padding: 5px 10px;
+    background-color: var(--green-btn);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .fixture-item button:hover {
+    background-color: var(--green-btn-hover);
+  }
+  
+  .create-team-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin-bottom: 30px;
+  }
+  
+  .create-team-form select,
+  .create-team-form input[type="text"] {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+  }
+  
+  .color-inputs {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .color-inputs label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .color-inputs input[type="color"] {
+    width: 50px;
+    height: 30px;
+    padding: 0;
+    border: none;
+  }
+  
+  .create-button {
+    padding: 10px;
+    background-color: var(--green-btn);
+    color: var(--text-color);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .create-button:hover {
+    background-color: var(--green-btn-hover);
+  }
+  
+  .view-teams-section {
+    margin-top: 30px;
+  }
+  
+  /* .league-selector {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  } */
+  
+  .league-selector,
+.matchday-selector {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+  .teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .team-item {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .team-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .team-colors {
+    display: flex;
+    gap: 5px;
+  }
+  
+  .color-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid black;
+  }
+  
+  .edit-form {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+  }
+  
+  .team-name {
+    font-weight: bold;
+  }
+  
+  .team-league {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 10px;
+  }
+  
+  .delete-button {
+    padding: 5px 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    align-self: flex-start;
+  }
+  
+  .delete-button:hover {
+    background-color: #d32f2f;
+  }
+
+  .create-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 400px;
+    margin-bottom: 30px;
+  }
+  
+  .create-form input,
+  .create-form select {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+  }
+  
+  .color-inputs {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .color-inputs label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .color-inputs input[type="color"] {
+    width: 50px;
+    height: 30px;
+    padding: 0;
+    border: none;
+  }
+  
+  .create-button,
+  .update-button,
+  .edit-button,
+  .delete-button,
+  .cancel-button {
+    padding: 10px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .create-button {
+    background-color: var(--green-btn);
+  }
+  
+  .create-button:hover {
+    background-color: var(--green-btn-hover);
+  }
+  
+  .update-button {
+    background-color: #2196F3;
+  }
+  
+  .update-button:hover {
+    background-color: #1E88E5;
+  }
+  
+  .edit-button {
+    background-color: #FFC107;
+  }
+  
+  .edit-button:hover {
+    background-color: #FFA000;
+  }
+  
+  .delete-button {
+    background-color: #f44336;
+  }
+  
+  .delete-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  .cancel-button {
+    background-color: #9E9E9E;
+  }
+  
+  .cancel-button:hover {
+    background-color: #757575;
+  }
+  
+  .view-section {
+    margin-top: 30px;
+  }
+  
+
+  
+  .grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .grid-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: var(--grid-item-color);
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .item-name {
+    font-weight: bold;
+  }
+  
+  .item-detail {
+    font-size: 0.9em;
+    color: #666;
+  }
+  
+  .item-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .team-colors {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .league-table {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .league-table h3 {
+    margin-bottom: 20px;
+  }
+  
+  .league-table .league-selector {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+  }
+  
+  .league-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .league-table th,
+  .league-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .league-table th {
+    background-color: var(--league-table-title);
+    font-weight: bold;
+  }
+  
+  .league-table .row-even {
+    background-color: var(--league-table-even);
+  }
+  
+  .league-table .row-odd {
+    background-color: var(--league-table-odd);
+  }
+  
+  .league-table .row-top {
+    background-color: var(--league-table-promotion);
+  }
+  
+  .league-table .row-bottom {
+    background-color: var(--league-table-relegation);
+  }
+  
+  .team-name-with-colors {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .team-colors {
+    display: flex;
+    gap: 5px;
+  }
+  
+  .color-circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid black;
+  }
+  
+  .table-legend {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+  }
+  
+  .legend-item {
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+
+  .legend-top {
+    background-color: var(--league-table-promotion);
+  }
+
+  .legend-bottom {
+    background-color: var(--league-table-relegation);
+  }
+
+  .error-message {
+    color: red;
+    margin-bottom: 10px;
+  }
+
+  .league-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
   }

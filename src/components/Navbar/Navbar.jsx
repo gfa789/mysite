@@ -42,8 +42,8 @@ function Navbar() {
     <>
       <nav className="navbar">
         <div className="navbar-title" onClick={() => navigate('/')}>
-          <span className="title-word">Your</span>
-          <span className="title-word">Name</span>
+          <span className="title-word">Atki</span>
+          <span className="title-word">App</span>
         </div>
         <ul className="navbar-links">
           {user ? (

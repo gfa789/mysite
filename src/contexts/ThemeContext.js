@@ -12,20 +12,41 @@ export const themes = {
     '--text-color-2': '#555555',
     '--primary-color': '#007bff',
     '--secondary-color': '#6c757d',
+    '--border-color': '#6c757d',
     '--navbar-bg': '#f8f9fa',
     '--sidebar-bg': '#ffffff',
-    '--btn-hover-color' : '#eeeeee'
+    '--btn-hover-color' : '#eeeeee',
+    '--grid-item-color' : '#f9f9f9',
+    '--input-color' : '#f9f9f9',
+    '--green-btn' : '#4CAF50',
+    '--green-btn-hover' : '#45a049',
+    '--league-table-title' : '#ffffff',
+    '--league-table-odd': 'f9f9f99a',
+    '--league-table-even' : '#ffffff',
+    '--league-table-promotion' : '#00ff001a',
+    '--league-table-relegation' : '#ff00001a'
+
   },
   dark: {
     name: 'Dark',
-    '--bg-color': '#333333',
+    '--bg-color': '#111111',
     '--text-color': '#ffffff',
     '--text-color-2': '#dddddd',
     '--primary-color': '#0056b3',
     '--secondary-color': '#6c757d',
+    '--border-color': '#6c757d',
     '--navbar-bg': '#222222',
     '--sidebar-bg': '#444444',
     '--btn-hover-color': '#333333',
+    '--grid-item-color' : '#060606',
+    '--input-color' : '#060606',
+    '--green-btn' : '#45a049',
+    '--green-btn-hover' : '#4CAF50',
+    '--league-table-title' : '#000000',
+    '--league-table-odd': '060606',
+    '--league-table-even' : '#030303',
+    '--league-table-promotion' : '#00ff001a',
+    '--league-table-relegation' : '#ff00001a'
   },
   // Add more themes as needed
 };

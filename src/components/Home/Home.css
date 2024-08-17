@@ -1,0 +1,160 @@
+/* Home Component Styles */
+.home {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .home h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--text-color);
+    font-size: 2.5em;
+    animation: fadeIn 1s ease-out;
+  }
+  
+  .home .league-selector {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    margin: 0 auto 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1em;
+    transition: all 0.3s ease;
+  }
+  
+  .home .league-selector:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+  }
+  
+  .dashboard-content {
+    display: flex;
+    gap: 20px;
+    animation: slideUp 0.5s ease-out;
+  }
+  
+  .fixtures-column,
+  .table-column {
+    flex: 1;
+    min-width: 0;
+    background: var(--input-color);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .fixtures-column:hover,
+  .table-column:hover {
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    transform: translateY(-5px);
+  }
+  
+  .fixtures-column h2,
+  .table-column h2 {
+    margin-bottom: 20px;
+    color: var(--text-color);
+    font-size: 1.8em;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 10px;
+  }
+  
+  .fixture-group {
+    margin-bottom: 20px;
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .fixture-date {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-color);
+  }
+  
+  .fixtures-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .fixture-item {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: var(--bg-color);
+    border-radius: 4px;
+    margin-bottom: 5px;
+    transition: all 0.2s ease;
+  }
+  
+  .fixture-item:hover {
+    background-color: var(--input-color);
+    transform: scale(1.02);
+  }
+  
+  .fixture-item .team {
+    flex: 1;
+    min-width: 100px;
+  }
+  
+  .fixture-item .home-team {
+    text-align: right;
+  }
+  
+  .fixture-item .away-team {
+    text-align: left;
+  }
+  
+  .fixture-item .score {
+    margin: 0 10px;
+    font-weight: bold;
+    min-width: 40px;
+    text-align: center;
+  }
+  
+  .fixture-item .fixture-time {
+    width: 100%;
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--secondary-color);
+    margin-top: 5px;
+  }
+  /* League Table Styles */
+  .league-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  /* Responsive design for smaller screens */
+  @media (max-width: 768px) {
+    .dashboard-content {
+      flex-direction: column;
+    }
+  
+    .fixtures-column,
+    .table-column {
+      width: 100%;
+    }
+  }
