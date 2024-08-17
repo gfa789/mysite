@@ -13,9 +13,9 @@ import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import AdminRoute from './components/AdminRoute/AdminRoute';
 import Profile from './components/Profile/Profile';
-import Dashboard from './components/Dashboard/Dashboard';
+import AdminDashboard from './components/Dashboard/AdminDashboard';
 
-import { ThemeProvider } from './ThemeContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 function App() {
 
@@ -43,7 +43,7 @@ function App() {
           <Route path="/mfa-enrollment" element={<PrivateRoute>
                   <MFAEnrollment />
                 </PrivateRoute>} />
-          <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
+          <Route path="/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
         

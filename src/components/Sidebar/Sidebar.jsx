@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useTheme, themes } from '../../ThemeContext';
+import { useTheme, themes } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { FaUser, FaCog, FaPaintBrush, FaSignOutAlt, FaSun, FaMoon, FaHome, FaInfoCircle, FaUserPlus, FaSignInAlt, FaChartLine } from 'react-icons/fa';
 

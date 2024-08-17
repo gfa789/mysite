@@ -1,0 +1,226 @@
+/* AdminDashboard.css */
+
+.admin-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .admin-dashboard h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .react-tabs__tab-list {
+    border-bottom: 1px solid #aaa;
+    margin: 0 0 10px;
+    padding: 0;
+  }
+  
+  .react-tabs__tab {
+    display: inline-block;
+    border: 1px solid transparent;
+    border-bottom: none;
+    bottom: -1px;
+    position: relative;
+    list-style: none;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+  
+  .react-tabs__tab--selected {
+    background: #fff;
+    border-color: #aaa;
+    color: black;
+    border-radius: 5px 5px 0 0;
+  }
+  
+  .react-tabs__tab-panel {
+    display: none;
+  }
+  
+  .react-tabs__tab-panel--selected {
+    display: block;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  input, select, button {
+    padding: 8px;
+    font-size: 16px;
+  }
+  
+  .submit-button {
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  .submit-button:hover {
+    background-color: #45a049;
+  }
+  
+  .admin-dashboard form label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .admin-dashboard ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .admin-dashboard li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .create-fixture-form {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .form-columns-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .form-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .datepicker-container {
+    width: 100%;
+  }
+  
+  /* ... (previous styles remain the same) ... */
+
+.react-datepicker {
+    width: 100% !important;
+    max-width: 300px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  .react-datepicker__header {
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #aeaeae;
+    padding-top: 8px;
+  }
+  
+  .react-datepicker__navigation {
+    top: 8px;
+    line-height: 1.7rem;
+    border: 0.45rem solid transparent;
+    max-width: 30px;
+    cursor: pointer;
+    
+  }
+  
+  .react-datepicker__navigation--previous {
+    left: 10px;
+    border-right-color: #ccc;
+  }
+  
+  .react-datepicker__navigation--next {
+    right: 10px;
+    border-left-color: #ccc;
+  }
+  
+  .react-datepicker__navigation:hover {
+    border-right-color: #b3b3b3;
+    border-left-color: #b3b3b3;
+  }
+  
+  .react-datepicker__navigation-icon {
+    position: relative;
+    top: -1px;
+    font-size: 20px;
+    width: 0;
+  }
+  
+  .react-datepicker__navigation-icon--previous::before {
+    transform: rotate(225deg);
+    right: -7px;
+  }
+  
+  .react-datepicker__navigation-icon--next::before {
+    transform: rotate(45deg);
+    left: -7px;
+  }
+  
+  .react-datepicker__navigation-icon::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    border: solid black;
+    border-width: 3px 3px 0 0;
+  }
+  
+  /* ... (rest of the styles remain the same) ... */
+  
+  .react-datepicker__month-container {
+    float: none !important;
+    width: 100% !important;
+  }
+  
+  .react-datepicker__month {
+    margin: 0.4em 0;
+  }
+  
+  .react-datepicker__day-names, .react-datepicker__week {
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .react-datepicker__day-name, .react-datepicker__day {
+    width: 1.9em;
+    line-height: 1.9em;
+    margin: 0.166em;
+  }
+  
+  .react-datepicker__current-month {
+    font-size: 1em;
+  }
+  
+  .react-datepicker__header__dropdown {
+    margin-top: 0.5em;
+  }
+  
+  .admin-dashboard select, .admin-dashboard button {
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+  }
+  
+  .admin-dashboard button {
+    cursor: pointer;
+    color: white;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  
+  @media (max-width: 768px) {
+    .form-columns-container {
+      flex-direction: column;
+    }
+  }
