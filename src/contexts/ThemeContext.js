@@ -46,7 +46,8 @@ export const themes = {
     '--league-table-odd': '060606',
     '--league-table-even' : '#030303',
     '--league-table-promotion' : '#00ff001a',
-    '--league-table-relegation' : '#ff00001a'
+    '--league-table-relegation' : '#ff00001a',
+    '--about-overlay' : 'rgba(0,0,0,0.8)'
   },
   // Add more themes as needed
 };

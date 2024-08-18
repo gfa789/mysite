@@ -24,6 +24,7 @@ function App() {
     <ThemeProvider>   
       <Router>
         <Navbar />
+        <div style={{height:'50px'}}/>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
