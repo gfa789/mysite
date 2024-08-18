@@ -7,6 +7,8 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   width: 100%;
   box-sizing: border-box;
+  z-index: 1000;
+  position: fixed;
 }
 
 @media (max-width: 768px) {
@@ -40,6 +42,16 @@
     gap: 0.5rem;
   }
   
+  
+  .navbar-title :hover {
+    cursor: pointer;
+    color: var(--bg-color);
+    -webkit-text-stroke-color: var(--text-color);
+    -webkit-text-stroke-width: 1.00px; 
+    transform: scale(1.02);
+    transition: all 1s;
+  }
+
   .title-word {
     font-size: 1.5rem;
     font-weight: bold;

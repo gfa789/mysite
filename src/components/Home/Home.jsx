@@ -8,7 +8,11 @@ const Home = () => {
   const [leagues, setLeagues] = useState([]);
   const [teams, setTeams] = useState([]);
   const [selectedLeague, setSelectedLeague] = useState('');
-  const [currentFixtures, setCurrentFixtures] = useState({});
+  const [allMatches, setAllMatches] = useState([]);
+  const [fixtures, setFixtures] = useState([]);
+  const [results, setResults] = useState([]);
+  const [currentMatchday, setCurrentMatchday] = useState(1);
+  const [maxMatchday, setMaxMatchday] = useState(1);
 
   useEffect(() => {
     fetchLeaguesAndTeams();
@@ -26,9 +30,8 @@ const Home = () => {
   }, [leagues]);
 
   useEffect(() => {
-    if (selectedLeague) {
-      console.log("Selected League ID:", selectedLeague);
-      fetchCurrentFixtures();
+    if (selectedLeague && teams.length > 0) {
+      fetchFixturesAndResults();
     }
   }, [selectedLeague, teams]);
 
@@ -38,63 +41,107 @@ const Home = () => {
       const leaguesSnapshot = await getDocs(leaguesCollection);
       const leaguesList = leaguesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setLeagues(leaguesList);
-      console.log("Fetched Leagues:", leaguesList);
 
       const teamsCollection = collection(db, 'teams');
       const teamsSnapshot = await getDocs(teamsCollection);
       const teamsList = teamsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setTeams(teamsList);
-      console.log("Fetched Teams:", teamsList);
     } catch (error) {
       console.error("Error fetching leagues and teams:", error);
     }
   };
 
-  const fetchCurrentFixtures = async () => {
+  const fetchFixturesAndResults = async () => {
     try {
-      console.log("Fetching fixtures for league ID:", selectedLeague);
       const matchesCollection = collection(db, 'matches');
-      const currentMatchdayQuery = query(
+      const matchesQuery = query(
         matchesCollection,
         where('leagueId', '==', selectedLeague),
+        orderBy('matchday'),
         orderBy('date'),
         orderBy('time')
       );
-      const matchesSnapshot = await getDocs(currentMatchdayQuery);
+      const matchesSnapshot = await getDocs(matchesQuery);
       
-      console.log("Fixtures found:", matchesSnapshot.size);
+      const matches = matchesSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        homeTeam: teams.find(team => team.id === doc.data().homeTeamId)?.name || 'Unknown Team',
+        awayTeam: teams.find(team => team.id === doc.data().awayTeamId)?.name || 'Unknown Team'
+      }));
 
-      if (!matchesSnapshot.empty) {
-        const fixturesData = matchesSnapshot.docs.map(doc => {
-          const data = doc.data();
-          console.log("Fixture data:", data);
-          return {
-            id: doc.id,
-            ...data,
-            homeTeam: teams.find(team => team.id === data.homeTeamId)?.name || 'Unknown Team',
-            awayTeam: teams.find(team => team.id === data.awayTeamId)?.name || 'Unknown Team'
-          };
-        });
+      setAllMatches(matches);
 
-        // Group fixtures by date
-        const groupedFixtures = fixturesData.reduce((acc, fixture) => {
-          const date = new Date(fixture.date.toDate()).toLocaleDateString();
-          if (!acc[date]) {
-            acc[date] = [];
-          }
-          acc[date].push(fixture);
-          return acc;
-        }, {});
+      const maxDay = Math.max(...matches.map(m => m.matchday));
+      setMaxMatchday(maxDay);
 
-        console.log("Grouped fixtures:", groupedFixtures);
-        setCurrentFixtures(groupedFixtures);
-      } else {
-        console.log("No fixtures found");
-        setCurrentFixtures({});
-      }
+      const defaultMatchday = matches
+        .filter(m => m.status !== 'played')
+        .reduce((min, match) => Math.min(min, match.matchday), maxDay);
+      
+      setCurrentMatchday(defaultMatchday);
+      updateFixturesAndResults(matches, defaultMatchday);
     } catch (error) {
-      console.error("Error fetching current fixtures:", error);
+      console.error("Error fetching fixtures and results:", error);
     }
+  };
+
+  const changeMatchday = (delta) => {
+    const newMatchday = Math.min(Math.max(1, currentMatchday + delta), maxMatchday);
+    setCurrentMatchday(newMatchday);
+    updateFixturesAndResults(allMatches, newMatchday);
+  };
+
+  const updateFixturesAndResults = (matches, matchday) => {
+    const currentFixtures = matches.filter(m => m.matchday === matchday && m.status !== 'played');
+    const currentResults = matches.filter(m => m.matchday === matchday && m.status === 'played');
+    
+    setFixtures(groupMatchesByDate(currentFixtures));
+    setResults(groupMatchesByDate(currentResults));
+  };
+
+  const groupMatchesByDate = (matches) => {
+    return matches.reduce((acc, match) => {
+      const date = formatDate(match.date);
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(match);
+      return acc;
+    }, {});
+  };
+
+  const formatDate = (dateInput) => {
+    let date;
+    
+    if (dateInput instanceof Date) {
+      date = dateInput;
+    } else if (typeof dateInput === 'object' && dateInput.toDate instanceof Function) {
+      // Firestore Timestamp
+      date = dateInput.toDate();
+    } else if (typeof dateInput === 'string') {
+      // Try parsing the string
+      date = new Date(dateInput);
+    } else {
+      console.error('Unsupported date format:', dateInput);
+      return 'Invalid Date';
+    }
+  
+    if (isNaN(date.getTime())) {
+      console.error('Invalid date:', dateInput);
+      return 'Invalid Date';
+    }
+  
+    return date.toLocaleDateString('en-GB', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  const formatTime = (timeString) => {
+    return timeString; // Already in HH:MM format
   };
 
   return (
@@ -110,33 +157,56 @@ const Home = () => {
         ))}
       </select>
 
+      <div className="matchday-navigation">
+        <button onClick={() => changeMatchday(-1)} disabled={currentMatchday === 1}>Previous</button>
+        <span>Matchday {currentMatchday}</span>
+        <button onClick={() => changeMatchday(1)} disabled={currentMatchday === maxMatchday}>Next</button>
+      </div>
+
       <div className="dashboard-content">
-        <div className="fixtures-column">
-          <h2>Fixtures and Results</h2>
-          {Object.keys(currentFixtures).length > 0 ? (
-            Object.entries(currentFixtures).map(([date, fixtures]) => (
-              <div key={date} className="fixture-group">
-                <h3 className="fixture-date">{date}</h3>
-                <ul className="fixtures-list">
-                  {fixtures.map(fixture => (
-                    <li key={fixture.id} className="fixture-item">
-                      <span className="team home-team">{fixture.homeTeam}</span>
-                      <span className="score">
-                        {fixture.status === 'played' 
-                          ? `${fixture.homeScore} - ${fixture.awayScore}`
-                          : 'vs'}
-                      </span>
-                      <span className="team away-team">{fixture.awayTeam}</span>
-                      <span className="fixture-time">
-                        {new Date(fixture.date.toDate()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
+        <div className="results-column">
+          <h2>Results</h2>
+          {Object.entries(results).length > 0 ? (
+            Object.entries(results).map(([date, matches]) => (
+              <div key={date} className="date-group">
+                <h3>{date}</h3>
+                <ul className="results-list">
+                  {matches.map(result => (
+                    <li key={result.id} className="result-item">
+                      <span className="team home-team">{result.homeTeam}</span>
+                      <span className="score">{result.homeScore} - {result.awayScore}</span>
+                      <span className="team away-team">{result.awayTeam}</span>
+                      <span className="match-time">{formatTime(result.time)}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             ))
           ) : (
-            <p>No fixtures found.</p>
+            <p>No results for this matchday yet.</p>
+          )}
+        </div>
+
+        <div className="fixtures-column">
+          <h2>Fixtures</h2>
+          {Object.entries(fixtures).length > 0 ? (
+            Object.entries(fixtures).map(([date, matches]) => (
+              <div key={date} className="date-group">
+                <h3>{date}</h3>
+                <ul className="fixtures-list">
+                  {matches.map(fixture => (
+                    <li key={fixture.id} className="fixture-item">
+                      <span className="team home-team">{fixture.homeTeam}</span>
+                      <span className="vs">vs</span>
+                      <span className="team away-team">{fixture.awayTeam}</span>
+                      <span className="match-time">{formatTime(fixture.time)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          ) : (
+            <p>No upcoming fixtures for this matchday.</p>
           )}
         </div>
 

@@ -243,6 +243,8 @@
   .input-scores {
     max-width: 800px;
     margin: 0 auto;
+    background-color: var(--input-color);
+    padding: 30px;
   }
   
   .score-filters {
@@ -280,7 +282,7 @@
     align-items: center;
     gap: 10px;
     padding: 15px;
-    background-color: var(--grid-item-color);
+    /* background-color: var(--grid-item-color); */
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
@@ -559,6 +561,9 @@
   
   .view-section {
     margin-top: 30px;
+    background-color: var(--input-color);
+    padding: 30px;
+    border-radius: 20px;
   }
   
 
@@ -567,6 +572,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
+    padding: 10px;
   }
   
   .grid-item {
@@ -574,8 +580,8 @@
     flex-direction: column;
     justify-content: space-between;
     padding: 15px;
-    background-color: var(--grid-item-color);
-    border-radius: 4px;
+    background-color: var(--bg-color);
+    border-radius: 6px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   

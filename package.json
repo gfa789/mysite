@@ -7,6 +7,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "firebase": "^10.13.0",
+    "framer-motion": "^11.3.28",
     "react": "^18.3.1",
     "react-datepicker": "^7.3.0",
     "react-dom": "^18.3.1",
@@ -14,6 +15,7 @@
     "react-password-strength-bar": "^0.4.1",
     "react-router-dom": "^6.26.0",
     "react-scripts": "5.0.1",
+    "react-scroll-video": "^1.0.6",
     "react-tabs": "^6.0.2",
     "styled-components": "^6.1.12",
     "web-vitals": "^2.1.4"
